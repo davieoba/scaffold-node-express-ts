@@ -1,11 +1,38 @@
-import express from "express"
-import http from "http"
+import App from "./App"
+import { ENVIRONMENTS } from "./config/app.config"
+import Env from "./config/app.keys"
+import connectToDB from "./config/db"
+import { logger } from "./extensions/helpers/logger.helper"
+import validateEnvironmentVariables from "./extensions/utils/env-validator"
 
-const app = express()
+validateEnvironmentVariables()
+connectToDB()
+  .then(() => {
+    App.listen(Env.PORT, () => {
+      if (Env.ENVIRONMENT === ENVIRONMENTS.DEV)
+        logger.info(
+          `Express is listening on http://localhost:${Env.PORT}${Env.API_PATH}`
+        )
+    })
+  })
+  .catch(() => logger.error(`DB Connection not successful`))
 
-const server = http.createServer(app)
-// const SERVER_PORT = process.env.NODE_ENV === 'test' ? TEST_PORT : PORT
-server.listen(5000, () => {
-  // logger.info(``)
-  console.log(`Server running on http://localhost:5000`)
+process.on("unhandledRejection", (reason: string, p: Promise<any>) => {
+  logger.error("Unhandled Rejection at:\n", p)
+  console.log("\n")
+  logger.error("Reason:\n", reason)
+  //Track error with error logger
+
+  process.exit(1)
+  //Restart with pm2 in production
+})
+
+process.on("uncaughtException", (error: Error) => {
+  logger.error(`Uncaught exception:`)
+  console.log("\n")
+  logger.error(error)
+  //Track error with error logger
+
+  process.exit(1)
+  //Restart with pm2 in production
 })
