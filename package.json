@@ -1,7 +1,7 @@
 {
-  "name": "e-commerce-backend-ts",
+  "name": "scaffold-application-express-ts",
   "version": "1.0.0",
-  "description": "e-commerce-backend built with typescript",
+  "description": "Express-ts scaffold Rest-api folder structure and setup code",
   "main": "src/index.ts",
   "author": "David Bodunrin",
   "license": "MIT",
