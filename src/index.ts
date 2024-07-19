@@ -1,3 +1,6 @@
+import App from "./App"
+import { ENVIRONMENTS } from "./config/app.config"
+import Env from "./config/app.keys"
 import { logger } from "./extensions/helpers/logger.helper"
 import validateEnvironmentVariables from "./extensions/utils/env-validator"
 
@@ -12,6 +15,14 @@ validateEnvironmentVariables()
 //     })
 //   })
 //   .catch(() => logger.error(`DB Connection not successful`))
+
+App.listen(Env.PORT, () => {
+  if (Env.ENVIRONMENT === ENVIRONMENTS.DEV) {
+    logger.info(
+      `Express is listening on http://localhost:${Env.PORT}${Env.API_PATH}`
+    )
+  }
+})
 
 process.on("unhandledRejection", (reason: string, p: Promise<any>) => {
   logger.error("Unhandled Rejection at:\n", p)
